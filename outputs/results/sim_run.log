@@ -1,0 +1,15 @@
+sim: 540 tasks on 8 workers
+  40/540  271s
+  80/540  495s
+  120/540  716s
+  160/540  929s
+  200/540  1135s
+  240/540  1354s
+  280/540  1554s
+  320/540  1842s
+  360/540  2083s
+  400/540  2367s
+  440/540  2557s
+  480/540  2879s
+  520/540  3185s
+wrote /run/media/danish/404/AK/projects/document-capture/outputs/results/sim_results.csv  (3283s)

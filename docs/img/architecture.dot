@@ -1,0 +1,16 @@
+digraph arch {
+graph [fontname="Helvetica", rankdir=TB, nodesep=0.35, ranksep=0.45, pad=0.3]; node [fontname="Helvetica", fontsize=11, shape=box, style="rounded,filled", fillcolor="#eef3fb", color="#2f5d9e"]; edge [fontname="Helvetica", fontsize=9, color="#555555"]; rankdir=LR;
+client [label="Client\n(mobile app / script)", shape=ellipse, fillcolor="#fff6dd", color="#b58105"];
+subgraph cluster_svc { label="docscan service (FastAPI)"; style="rounded,dashed"; color="#999999"; fontname="Helvetica";
+  api [label="POST /scan\nPOST /detect\nGET /health"];
+  pipe [label="pipeline.scan()"];
+  det [label="detect.py\nproposals + scoring"]; rec [label="rectify.py\nhomography + aspect"]; ori [label="orient.py\nrotation + deskew"];
+  api -> pipe; pipe -> det; pipe -> rec; pipe -> ori;
+}
+ocr [label="OCR engine\n(Tesseract / RapidOCR)", fillcolor="#e9f6ee", color="#2e8b57"];
+subgraph cluster_eval { label="Offline evaluation"; style="rounded,dashed"; color="#999999"; fontname="Helvetica";
+  sim [label="simulate.py\npinhole-camera capture\n+ exact ground truth"]; data [label="data.py\nCORD-v2 receipts (CC BY 4.0)"]; met [label="metrics.py\nIoU, corner error, word F1,\nnumeric recall"]; run [label="scripts/run_eval.py"]; tune [label="scripts/tune_detector.py\n(validation split only)"];
+  data -> sim -> run; run -> met; tune -> det [style=dashed, label="weights"];
+}
+client -> api [label="image"]; api -> client [label="scan.png + JSON"]; pipe -> ocr [style=dashed, label="orientation score"]; run -> pipe;
+}

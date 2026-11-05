@@ -1,0 +1,4 @@
+native: 100 tasks on 8 workers
+  40/100  320s
+  80/100  490s
+wrote /run/media/danish/404/AK/projects/document-capture/outputs/results/native_results.csv  (573s)
