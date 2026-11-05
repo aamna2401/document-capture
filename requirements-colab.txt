@@ -1,0 +1,12 @@
+# On top of what Colab ships (torch, numpy, pandas, pillow). Pinned loosely; the run's meta.json records exact versions.
+pdfplumber
+pydantic>=2.0
+pyyaml
+rapidocr-onnxruntime
+pytesseract
+rapidfuzz
+opencv-python-headless
+transformers>=4.40
+datasets
+easyocr
+pyarrow

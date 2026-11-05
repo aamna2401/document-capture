@@ -1,0 +1,24 @@
+# One experiment = engines x document types. Everything that affects a result is in this file.
+seed: 0
+run_name: baseline
+
+datasets:                       # document type -> gold folder (files + name.txt references). Test splits only.
+  forms:        data/gold/funsd         # FUNSD test: noisy scanned forms
+  receipts:     data/gold/cord          # CORD test: receipt photos
+  scanned_docs: data/gold/arxiv         # arXiv pages rasterised at 150 DPI, reference = original text layer
+
+engines:                        # label -> {name: registry name, options: constructor args}
+  rapidocr:  {name: rapidocr}
+  tesseract: {name: tesseract}
+  easyocr:   {name: easyocr}
+  trocr_pretrained:
+    name: trocr
+    options: {checkpoint: microsoft/trocr-base-printed, label: trocr_pretrained}
+  # added after training (see configs/train_recognizer.yaml):
+  # trocr_finetuned:
+  #   name: trocr
+  #   options: {checkpoint: /content/drive/MyDrive/document-capture-runs/recognizer/best, label: trocr_finetuned}
+
+capture: false                  # run docscan on image inputs (phone photos); evaluate separately, it can hurt
+target_f1: 0.90                 # reported as "share of documents at or above target"
+bootstrap: {n: 1000, ci: 0.95}  # resamples documents

@@ -50,6 +50,25 @@ def arxiv():
     print(f"arxiv: {n} scanned pages")
 
 
+def cord():
+    """CORD-v2 test split: receipt photos. Reference = all annotated words, rough reading order. Needs data/cord_test.parquet."""
+    from docscan.data import load_cord
+    import cv2
+    out = ROOT / "gold/cord"
+    out.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for s in load_cord("test"):
+        words = sorted(s["words"], key=lambda w: (round(w[2] / 15), w[1]))
+        (out / f"{s['id']}.txt").write_text(" ".join(w[0] for w in words))
+        cv2.imwrite(str(out / f"{s['id']}.jpg"), s["image"], [cv2.IMWRITE_JPEG_QUALITY, 95])
+        n += 1
+    print(f"cord: {n} receipts")
+
+
 if __name__ == "__main__":
     funsd()
     arxiv()
+    if (ROOT / "cord_test.parquet").exists():
+        cord()
+    else:
+        print("cord: skipped (data/cord_test.parquet missing)")

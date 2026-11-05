@@ -25,7 +25,7 @@ def _ocr_page(page: Page, img_bgr, engine) -> Page:
     return page
 
 
-def _extract_image(path, sha, ocr_engine, cache, capture: bool) -> Document:
+def _extract_image(path, sha, ocr_engine, cache, capture: bool, engine_obj=None) -> Document:
     """A photo or scan: optionally run docscan (detect, rectify, orient, deskew), then OCR as one page."""
     import cv2
     key = ocr_engine + ("+docscan" if capture else "")
@@ -43,7 +43,7 @@ def _extract_image(path, sha, ocr_engine, cache, capture: bool) -> Document:
     h, w = img.shape[:2]
     from .engines import get_engine
     page = Page(number=1, width=float(w), height=float(h), kind="scanned")
-    blocks = get_engine(ocr_engine).read(img)                 # image pixels are the coordinate system here
+    blocks = (engine_obj or get_engine(ocr_engine)).read(img)  # image pixels are the coordinate system here
     page.blocks = sorted(blocks, key=lambda b: (round(b.bbox[1] / 4), b.bbox[0]))
     page.kind = "scanned" if blocks else "empty"
     cache.put(sha, 1, key, page)
@@ -51,17 +51,20 @@ def _extract_image(path, sha, ocr_engine, cache, capture: bool) -> Document:
     return doc
 
 
-def extract(path, ocr_engine: str = "rapidocr", cache: PageCache | None = None, capture: bool = False) -> Document:
+def extract(path, ocr_engine="rapidocr", cache: PageCache | None = None, capture: bool = False) -> Document:
     """capture=True runs the docscan cleanup on image inputs (use for phone photos, not flat scans)."""
+    """ocr_engine is a registry name or an already-built engine object (needed for options such as a checkpoint)."""
     kind = file_kind(path)
     sha = sha256_file(path)
     cache = cache or PageCache()
+    engine_obj = None if isinstance(ocr_engine, str) else ocr_engine
+    ocr_engine = ocr_engine if isinstance(ocr_engine, str) else engine_obj.name
     if kind == "image":
-        return _extract_image(path, sha, ocr_engine, cache, capture)
+        return _extract_image(path, sha, ocr_engine, cache, capture, engine_obj)
     if kind != "pdf":
         raise NotImplementedError(f"{kind}: only PDFs and images are handled so far (Office files are next)")
     doc = Document(path=str(path), sha256=sha)
-    engine = None
+    engine = engine_obj
     with open_pdf(path) as pdf:
         for i, pp in enumerate(pdf.pages, 1):
             hit = cache.get(sha, i, ocr_engine)

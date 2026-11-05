@@ -1,0 +1,12 @@
+seed: 0
+base_model: microsoft/trocr-small-printed     # small enough for a free T4; try trocr-base-printed with Colab Pro
+data_dir: data/crops                           # produced by scripts/prepare_crops.py
+out_dir: outputs/recognizer                    # point at Google Drive on Colab so checkpoints survive disconnects
+epochs: 8
+batch_size: 16
+lr: 3.0e-5
+weight_decay: 0.01
+max_target_len: 64
+fp16: true
+patience: 2                                    # stop when val CER has not improved for this many epochs
+smoke: false                                   # true: 20 steps on 64 crops, to check the whole loop before a long run
