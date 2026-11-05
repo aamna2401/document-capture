@@ -1,0 +1,21 @@
+{
+ "time_utc": "2026-11-05T10:15:30+00:00",
+ "git_commit": "f48df4486a5a58d9267f777efdded5cc3e57a68a",
+ "git_dirty": false,
+ "config_sha256": "004658a85ea624a2",
+ "seed": 0,
+ "python": "3.13.16",
+ "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+ "device": "Tesla T4",
+ "packages": {
+  "numpy": "2.4.6",
+  "opencv-python-headless": "5.0.0.93",
+  "pdfplumber": "0.11.10",
+  "pydantic": "2.14.1",
+  "rapidocr-onnxruntime": "1.2.3",
+  "pytesseract": "0.3.13",
+  "torch": "2.11.0+cu130",
+  "transformers": "5.22.0",
+  "easyocr": "1.7.2"
+ }
+}
